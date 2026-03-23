@@ -1,10 +1,8 @@
-# ml_experiments.py
 """
 Simple ML experiments for the Mood Machine lab.
 
-This file uses a "real" machine learning library (scikit-learn)
-to train a tiny text classifier on the same SAMPLE_POSTS and
-TRUE_LABELS that you use with the rule based model.
+This file uses scikit-learn to train a tiny text classifier on the same
+SAMPLE_POSTS and TRUE_LABELS used by the rule-based model.
 """
 
 from typing import List, Tuple
@@ -21,15 +19,8 @@ def train_ml_model(
     labels: List[str],
 ) -> Tuple[CountVectorizer, LogisticRegression]:
     """
-    Train a simple text classifier using bag of words features
+    Train a simple text classifier using bag-of-words features
     and logistic regression.
-
-    Steps:
-      1. Convert the texts into numeric vectors using CountVectorizer.
-      2. Fit a LogisticRegression model on those vectors and labels.
-
-    Returns:
-      (vectorizer, model)
     """
     if len(texts) != len(labels):
         raise ValueError(
@@ -58,28 +49,29 @@ def evaluate_on_dataset(
     """
     Evaluate the trained model on a labeled dataset.
 
-    Prints each text with its predicted label and the true label,
-    then returns the overall accuracy as a float between 0 and 1.
+    Prints each text with its predicted and true label,
+    then returns overall accuracy.
     """
     if len(texts) != len(labels):
-        raise ValueError(
-            "texts and labels must be the same length. "
-            "Check your dataset."
-        )
+        raise ValueError("texts and labels must be the same length.")
 
     X = vectorizer.transform(texts)
     preds = model.predict(X)
 
-    print("=== ML Model Evaluation on Dataset ===")
+    print("=== ML Model Evaluation on Dataset ===\n")
     correct = 0
     for text, true_label, pred_label in zip(texts, labels, preds):
         is_correct = pred_label == true_label
         if is_correct:
             correct += 1
-        print(f'"{text}" -> predicted={pred_label}, true={true_label}')
+        status = "✓" if is_correct else "✗"
+        print(f'  {status} "{text}"')
+        print(f'    predicted={pred_label}, true={true_label}\n')
 
     accuracy = accuracy_score(labels, preds)
-    print(f"\nAccuracy on this dataset: {accuracy:.2f}")
+    print(f"ML model accuracy on this dataset: {accuracy:.2f} ({correct}/{len(texts)})")
+    print("Note: This is training accuracy (same data used for training and evaluation).")
+    print("It is artificially inflated and does not reflect real-world performance.\n")
     return accuracy
 
 
@@ -89,12 +81,10 @@ def predict_single_text(
     model: LogisticRegression,
 ) -> str:
     """
-    Predict the mood label for a single text string using
-    the trained ML model.
+    Predict the mood label for a single text string using the trained ML model.
     """
     X = vectorizer.transform([text])
-    pred = model.predict(X)[0]
-    return pred
+    return model.predict(X)[0]
 
 
 def run_interactive_loop(
@@ -102,8 +92,7 @@ def run_interactive_loop(
     model: LogisticRegression,
 ) -> None:
     """
-    Let the user type their own sentences and see the ML model's
-    predicted mood label.
+    Let the user type their own sentences and see the ML model's predicted label.
 
     Type 'quit' or press Enter on an empty line to exit.
     """
@@ -118,22 +107,19 @@ def run_interactive_loop(
             break
 
         label = predict_single_text(user_input, vectorizer, model)
-        print(f"ML model: {label}")
+        print(f"ML model: {label}\n")
 
 
 if __name__ == "__main__":
     print("Training an ML model on SAMPLE_POSTS and TRUE_LABELS from dataset.py...")
     print("Make sure you have added enough labeled examples before running this.\n")
 
-    # Train the model on the current dataset.
     vectorizer, model = train_ml_model(SAMPLE_POSTS, TRUE_LABELS)
 
-    # Evaluate on the same dataset (training accuracy).
     evaluate_on_dataset(SAMPLE_POSTS, TRUE_LABELS, vectorizer, model)
 
-    # Let the user try their own examples.
     run_interactive_loop(vectorizer, model)
 
-    print("\nTip: Compare these predictions with the rule based model")
+    print("\nTip: Compare these predictions with the rule-based model")
     print("by running `python main.py`. Notice where they fail in")
     print("similar ways and where they fail in different ways.")

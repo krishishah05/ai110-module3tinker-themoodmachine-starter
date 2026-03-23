@@ -1,67 +1,68 @@
 # The Mood Machine
 
-The Mood Machine is a simple text classifier that begins with a rule based approach and can optionally be extended with a small machine learning model. It tries to guess whether a short piece of text sounds **positive**, **negative**, **neutral**, or even **mixed** based on patterns in your data.
+Submitted by: Krishi Shah
 
-This lab gives you hands on experience with how basic systems work, where they break, and how different modeling choices affect fairness and accuracy. You will edit code, add data, run experiments, and write a short model card reflection.
+## Overview
 
----
+The Mood Machine is a sentiment analyzer that classifies short social-media-style posts into one of four mood labels: **positive**, **negative**, **neutral**, or **mixed**.
 
-## Repo Structure
+Two approaches were built and compared:
 
-```plaintext
-├── dataset.py         # Starter word lists and example posts (you will expand these)
-├── mood_analyzer.py   # Rule based classifier with TODOs to improve
-├── main.py            # Runs the rule based model and interactive demo
-├── ml_experiments.py  # (New) A tiny ML classifier using scikit-learn
-├── model_card.md      # Template to fill out after experimenting
-└── requirements.txt   # Dependencies for optional ML exploration
+- **Rule-Based Classifier** (`mood_analyzer.py`) — hand-crafted word lists, negation detection, internet slang, and emoji signals.
+- **ML Classifier** (`ml_experiments.py`) — bag-of-words features with Logistic Regression (scikit-learn).
+
+Built as part of the AI110 Foundations of AI Engineering course (Module 3 Tinker: The Mood Machine).
+
+## Project Structure
+
+| File | Purpose |
+|---|---|
+| `dataset.py` | Word lists and 16 labeled sample posts |
+| `mood_analyzer.py` | Rule-based classifier with negation, slang, and emoji support |
+| `main.py` | Evaluates and demos the rule-based model |
+| `ml_experiments.py` | Trains and evaluates a Logistic Regression classifier |
+| `model_card.md` | Full documentation of both models, results, and limitations |
+| `requirements.txt` | Python dependencies |
+
+## Setup
+
+```bash
+pip install -r requirements.txt
 ```
 
----
+## Usage
 
-## Getting Started
+Run the rule-based model (evaluation + interactive mode):
+```bash
+python main.py
+```
 
-1. Open this folder in VS Code.
-2. Make sure your Python environment is active.
-3. Install dependencies:
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. Run the rule-based starter:
-
-    ```bash
-    python main.py
-    ```
-
-If pieces of the analyzer are not implemented yet, you will see helpful errors that guide you to the TODOs.
-
-To try the ML model later, run:
-
+Run the ML model:
 ```bash
 python ml_experiments.py
 ```
 
----
+## Results
 
-## What You Will Do
+| Model | Accuracy |
+|---|---|
+| Rule-Based | **0.94** (15/16) |
+| ML — Logistic Regression | 1.00* (16/16) |
 
-During this lab you will:
+*ML accuracy is measured on training data only and is artificially inflated due to memorization. See `model_card.md` for full analysis.
 
-- Implement the missing parts of the rule based `MoodAnalyzer`.
-- Add new positive and negative words.
-- Expand the dataset with more posts, including slang, emojis, sarcasm, or mixed emotions.
-- Observe unusual or incorrect predictions and think about why they happen.
-- Train a tiny machine learning model and compare its behavior to your rule based system.
-- Complete the model card with your findings about data, behavior, limitations, and improvements.
-- The goal is to help you reason about how models behave, how data shapes them, and why even small design choices matter.
+### Known Failure: Sarcasm
 
----
+The rule-based model misclassifies `"I love getting stuck in traffic"` as **positive** (true label: **negative**). The word "love" scores +1 and the model has no mechanism for detecting irony. This is a documented limitation — see the model card for details.
 
-## Tips
+## Highlights
 
-- Start with preprocessing before updating scoring rules.
-- When debugging, print tokens, scores, or intermediate choices.
-- Ask an AI assistant to help create edge case posts or unusual wording.
-- Try examples that mislead or confuse your model. Failure cases teach you the most.
+- **Negation handling**: "not happy" → negative; "not bad" → positive
+- **Slang signals**: "fire", "sick", "bussin", "lowkey" → positive; "mid", "cringe" → negative
+- **Emoji signals**: 🔥 😊 😅 → positive; 😢 😡 💔 → negative
+- **Mixed detection**: posts with both positive and negative hits → "mixed" label
+- **Explainability**: every prediction includes a score breakdown via `explain()`
+
+## License
+
+For educational use as part of CodePath AI110.

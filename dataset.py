@@ -1,16 +1,12 @@
-"""
-Shared data for the Mood Machine lab.
+# Shared data for the Mood Machine lab.
+#
+# This file defines:
+#   - POSITIVE_WORDS: starter list of positive words
+#   - NEGATIVE_WORDS: starter list of negative words
+#   - SAMPLE_POSTS: short example posts for evaluation and training
+#   - TRUE_LABELS: human labels for each post in SAMPLE_POSTS
 
-This file defines:
-  - POSITIVE_WORDS: starter list of positive words
-  - NEGATIVE_WORDS: starter list of negative words
-  - SAMPLE_POSTS: short example posts for evaluation and training
-  - TRUE_LABELS: human labels for each post in SAMPLE_POSTS
-"""
-
-# ---------------------------------------------------------------------
-# Starter word lists
-# ---------------------------------------------------------------------
+# Word lists — expanded to include common emotions, slang roots, and adjectives
 
 POSITIVE_WORDS = [
     "happy",
@@ -23,6 +19,16 @@ POSITIVE_WORDS = [
     "chill",
     "relaxed",
     "amazing",
+    "proud",
+    "hopeful",
+    "wonderful",
+    "brilliant",
+    "nice",
+    "okay",
+    "accomplished",
+    "better",
+    "glad",
+    "fantastic",
 ]
 
 NEGATIVE_WORDS = [
@@ -36,59 +42,84 @@ NEGATIVE_WORDS = [
     "stressed",
     "hate",
     "boring",
+    "exhausted",
+    "failed",
+    "miserable",
+    "frustrated",
+    "overwhelmed",
+    "horrible",
 ]
 
-# ---------------------------------------------------------------------
-# Starter labeled dataset
-# ---------------------------------------------------------------------
+# Labeled dataset.
+# Each post in SAMPLE_POSTS must have exactly one matching entry in TRUE_LABELS.
+# Quick sanity check: len(SAMPLE_POSTS) == len(TRUE_LABELS)
 
-# Short example posts written as if they were social media updates or messages.
 SAMPLE_POSTS = [
+    # --- Original 6 posts ---
     "I love this class so much",
     "Today was a terrible day",
     "Feeling tired but kind of hopeful",
     "This is fine",
     "So excited for the weekend",
     "I am not happy about this",
+
+    # --- 10 new posts: slang, emojis, negation, sarcasm, mixed emotions ---
+
+    # Slang + emoji (positive)
+    "This is absolutely fire 🔥",
+
+    # Sarcasm — model will misclassify this as positive (intentional failure case)
+    "I love getting stuck in traffic",
+
+    # Negation of a negative word (positive)
+    "Not bad at all honestly",
+
+    # Mixed: negative exhaustion + positive achievement
+    "I'm exhausted but really proud of what I accomplished",
+
+    # Internet slang (positive)
+    "This food is lowkey bussin",
+
+    # Stacked negatives (negative)
+    "I really hate how tired and stressed I always feel",
+
+    # Mixed: stress + optimism
+    "kinda stressed out but everything will be okay",
+
+    # Slang + emoji (positive)
+    "The concert was sick 🔥",
+
+    # Ambiguous "fine" — no clear signal (neutral)
+    "I'm fine with it",
+
+    # Mixed: failure + relief emoji
+    "Just failed my exam but at least it's over 😅",
 ]
 
-# Human labels for each post above.
-# Allowed labels in the starter:
-#   - "positive"
-#   - "negative"
-#   - "neutral"
-#   - "mixed"
 TRUE_LABELS = [
-    "positive",  # "I love this class so much"
-    "negative",  # "Today was a terrible day"
-    "mixed",     # "Feeling tired but kind of hopeful"
-    "neutral",   # "This is fine"
-    "positive",  # "So excited for the weekend"
-    "negative",  # "I am not happy about this"
+    # Original 6
+    "positive",
+    "negative",
+    "mixed",
+    "neutral",
+    "positive",
+    "negative",
+
+    # New 10
+    "positive",   # fire 🔥
+    "negative",   # sarcasm — model predicted positive (documented failure)
+    "positive",   # not bad
+    "mixed",      # exhausted but proud
+    "positive",   # lowkey bussin
+    "negative",   # hate + tired + stressed
+    "mixed",      # stressed + okay
+    "positive",   # sick 🔥
+    "neutral",    # I'm fine with it
+    "mixed",      # failed + 😅
 ]
 
-# TODO: Add 5-10 more posts and labels.
-#
-# Requirements:
-#   - For every new post you add to SAMPLE_POSTS, you must add one
-#     matching label to TRUE_LABELS.
-#   - SAMPLE_POSTS and TRUE_LABELS must always have the same length.
-#   - Include a variety of language styles, such as:
-#       * Slang ("lowkey", "highkey", "no cap")
-#       * Emojis (":)", ":(", "🥲", "😂", "💀")
-#       * Sarcasm ("I absolutely love getting stuck in traffic")
-#       * Ambiguous or mixed feelings
-#
-# Tips:
-#   - Try to create some examples that are hard to label even for you.
-#   - Make a note of any examples that you and a friend might disagree on.
-#     Those "edge cases" are interesting to inspect for both the rule based
-#     and ML models.
-#
-# Example of how you might extend the lists:
-#
-# SAMPLE_POSTS.append("Lowkey stressed but kind of proud of myself")
-# TRUE_LABELS.append("mixed")
-#
-# Remember to keep them aligned:
-#   len(SAMPLE_POSTS) == len(TRUE_LABELS)
+# Sanity check (runs on import)
+assert len(SAMPLE_POSTS) == len(TRUE_LABELS), (
+    f"Mismatch: {len(SAMPLE_POSTS)} posts but {len(TRUE_LABELS)} labels. "
+    "Every post must have exactly one label."
+)
